@@ -25,8 +25,15 @@ public class AuctionsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<AuctionDto>>> GetAllAuctions() 
+    public async Task<ActionResult<List<AuctionDto>>> GetAllAuctions(string date)
     {
+        var query = _context.Auctions.OrderBy(x => x.Item.Make).AsQueryable();
+
+        if (!string.IsNullOrEmpty(date))
+        {
+            query = query.Where(x => x.UpdatedAt);
+        }
+        
         var auctions = await _context.Auctions
             .Include(x => x.Item)
             .OrderBy(x => x.Item.Make)
